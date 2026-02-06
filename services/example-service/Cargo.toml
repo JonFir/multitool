@@ -1,8 +1,0 @@
-[package]
-name = "example-service"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
-license.workspace = true
-
-[dependencies]
