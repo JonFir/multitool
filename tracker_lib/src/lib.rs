@@ -21,6 +21,7 @@
 //! ```
 
 mod api_client;
+pub mod commands;
 pub mod task;
 
 pub use api_client::{

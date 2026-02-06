@@ -7,6 +7,8 @@ license.workspace = true
 
 [dependencies]
 anyhow.workspace = true
-# Add your services and utilities as dependencies here
-# example-service = { path = "../services/example-service" }
-# example-util = { path = "../utilities/example-util" }
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+clap.workspace = true
+tracker_lib = { path = "../tracker_lib" }

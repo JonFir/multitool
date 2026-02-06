@@ -158,6 +158,36 @@ impl TrackerClient {
         Self::new(TrackerConfig::new(oauth_token))
     }
 
+    /// Создать клиент из переменной окружения TRACKER_TOKEN
+    ///
+    /// # Возвращает
+    ///
+    /// Result с клиентом или ошибкой, если переменная окружения не установлена
+    ///
+    /// # Примеры
+    ///
+    /// ```no_run
+    /// # use tracker_lib::TrackerClient;
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// // Убедитесь, что переменная окружения TRACKER_TOKEN установлена
+    /// let client = TrackerClient::from_env()?;
+    /// let issue = client.get_issue("TEST-1", None).await?;
+    /// println!("Задача: {} - {}", issue.key, issue.summary);
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn from_env() -> Result<Self> {
+        let token = std::env::var("TRACKER_TOKEN").map_err(|_| {
+            TrackerError::ConfigError(
+                "Переменная окружения TRACKER_TOKEN не установлена. \
+                 Установите её командой: export TRACKER_TOKEN=your-token"
+                    .to_string(),
+            )
+        })?;
+        Self::with_token(token)
+    }
+
     /// Построить полный URL для ресурса
     fn build_url(&self, resource_path: &str) -> String {
         let path = resource_path.trim_start_matches('/');
