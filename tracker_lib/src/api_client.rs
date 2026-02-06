@@ -18,6 +18,15 @@ pub enum TrackerError {
     #[error("Authentication failed: {0}")]
     AuthError(String),
 
+    #[error("Unauthorized (401): User is not authenticated. Please check your OAuth token and ensure API access is properly configured.")]
+    Unauthorized,
+
+    #[error("Forbidden (403): Insufficient permissions to perform this action. You need the same permissions in the API as you would in the Tracker interface.")]
+    Forbidden,
+
+    #[error("Not Found (404): The requested resource was not found. Please verify the object identifier or key. {resource}")]
+    NotFound { resource: String },
+
     #[error("Invalid configuration: {0}")]
     ConfigError(String),
 }
@@ -180,6 +189,7 @@ impl TrackerClient {
     }
 
     /// Обработать ответ и извлечь метаданные пагинации
+    #[tracing::instrument(skip(self, response), fields(status = ?response.status()))]
     async fn handle_response(&self, response: Response) -> Result<(Value, Option<PaginationMeta>)> {
         let status = response.status();
 
@@ -210,13 +220,41 @@ impl TrackerClient {
                 .text()
                 .await
                 .unwrap_or_else(|_| "Unknown error".to_string());
-            return Err(TrackerError::ApiError {
-                status,
-                message: error_text,
-            });
+
+            // Обрабатываем специфичные коды ошибок
+            let error = match status {
+                StatusCode::UNAUTHORIZED => {
+                    tracing::error!("API request failed: Unauthorized (401)");
+                    TrackerError::Unauthorized
+                }
+                StatusCode::FORBIDDEN => {
+                    tracing::error!("API request failed: Forbidden (403)");
+                    TrackerError::Forbidden
+                }
+                StatusCode::NOT_FOUND => {
+                    tracing::error!("API request failed: Not Found (404) - {}", error_text);
+                    TrackerError::NotFound {
+                        resource: error_text,
+                    }
+                }
+                _ => {
+                    tracing::error!(
+                        status = %status,
+                        message = %error_text,
+                        "API request failed with unexpected status code"
+                    );
+                    TrackerError::ApiError {
+                        status,
+                        message: error_text,
+                    }
+                }
+            };
+
+            return Err(error);
         }
 
         let json_value = response.json::<Value>().await?;
+        tracing::debug!("Response received successfully");
         Ok((json_value, pagination_meta))
     }
 
@@ -350,5 +388,42 @@ mod tests {
 
         let url = client.build_url("issues/TEST-1");
         assert_eq!(url, "https://st-api.yandex-team.ru/v3/issues/TEST-1");
+    }
+
+    #[test]
+    fn test_error_display_unauthorized() {
+        let error = TrackerError::Unauthorized;
+        let error_msg = error.to_string();
+        assert!(error_msg.contains("401"));
+        assert!(error_msg.contains("not authenticated"));
+    }
+
+    #[test]
+    fn test_error_display_forbidden() {
+        let error = TrackerError::Forbidden;
+        let error_msg = error.to_string();
+        assert!(error_msg.contains("403"));
+        assert!(error_msg.contains("Insufficient permissions"));
+    }
+
+    #[test]
+    fn test_error_display_not_found() {
+        let error = TrackerError::NotFound {
+            resource: "TASK-123".to_string(),
+        };
+        let error_msg = error.to_string();
+        assert!(error_msg.contains("404"));
+        assert!(error_msg.contains("TASK-123"));
+    }
+
+    #[test]
+    fn test_error_display_api_error() {
+        let error = TrackerError::ApiError {
+            status: StatusCode::BAD_REQUEST,
+            message: "Invalid request".to_string(),
+        };
+        let error_msg = error.to_string();
+        assert!(error_msg.contains("400"));
+        assert!(error_msg.contains("Invalid request"));
     }
 }
