@@ -1,0 +1,12 @@
+[package]
+name = "cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+# Add your services and utilities as dependencies here
+# example-service = { path = "../services/example-service" }
+# example-util = { path = "../utilities/example-util" }
