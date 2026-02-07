@@ -22,6 +22,8 @@
 
 mod api_client;
 pub mod commands;
+pub mod models;
+pub mod search;
 pub mod task;
 
 pub use api_client::{
