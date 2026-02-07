@@ -168,12 +168,14 @@ mod tests {
 
     #[test]
     fn test_search_request_serialization() {
-        let mut request = SearchRequest::default();
-        request.filter = Some(serde_json::json!({
-            "queue": "TREK",
-            "assignee": "empty()"
-        }));
-        request.order = Some("+status".to_string());
+        let request = SearchRequest {
+            filter: Some(serde_json::json!({
+                "queue": "TREK",
+                "assignee": "empty()"
+            })),
+            order: Some("+status".to_string()),
+            ..Default::default()
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"filter\""));
@@ -184,8 +186,10 @@ mod tests {
 
     #[test]
     fn test_search_request_with_query() {
-        let mut request = SearchRequest::default();
-        request.query = Some("Queue: TREK Assignee: me()".to_string());
+        let request = SearchRequest {
+            query: Some("Queue: TREK Assignee: me()".to_string()),
+            ..Default::default()
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"query\""));
@@ -194,8 +198,10 @@ mod tests {
 
     #[test]
     fn test_search_request_with_keys() {
-        let mut request = SearchRequest::default();
-        request.keys = Some(vec!["TREK-1".to_string(), "TREK-2".to_string()]);
+        let request = SearchRequest {
+            keys: Some(vec!["TREK-1".to_string(), "TREK-2".to_string()]),
+            ..Default::default()
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"keys\""));

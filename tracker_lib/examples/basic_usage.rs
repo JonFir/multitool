@@ -6,7 +6,7 @@ use tracker_lib::{Language, PaginationParams, TrackerClient, TrackerConfig};
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Пример 1: Создание клиента с минимальной конфигурацией
     println!("=== Пример 1: Создание клиента ===");
-    let client = TrackerClient::with_token("your-oauth-token")?;
+    let _client = TrackerClient::with_token("your-oauth-token")?;
 
     // Пример 2: Создание клиента с полной конфигурацией
     println!("\n=== Пример 2: Расширенная конфигурация ===");
@@ -83,7 +83,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     });
 
-    let pagination = PaginationParams {
+    let _pagination = PaginationParams {
         per_page: Some(15),
         page: Some(1),
     };
