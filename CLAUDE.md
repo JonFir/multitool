@@ -129,6 +129,25 @@ async fn fetch_tasks(client: &TaskClient, filter: &TaskFilter) -> Result<Vec<Tas
 
 ## Best Practices
 
+### Code Style
+
+#### Functional vs Imperative Programming
+**Guideline**: Prefer functional style over imperative style, but prioritize readability and clarity above all.
+
+**When to use functional style:**
+- Working with collections (iterators, maps, filters, folds)
+- Transforming data through pipelines
+- When the functional approach is clear and self-documenting
+- Chaining operations that naturally flow together
+
+**When imperative style is acceptable:**
+- Complex logic that becomes convoluted in functional style
+- Performance-critical sections where explicit loops are clearer
+- Early returns or break conditions that improve readability
+- When functional style requires excessive nesting or mental overhead
+
+**Key principle**: The goal is code that is easy to understand, maintain, and debug. Don't sacrifice clarity for the sake of being "more functional."
+
 ### Error Handling
 - Use `anyhow` for error handling
 - Provide context with errors using `.context()` or `.with_context()`

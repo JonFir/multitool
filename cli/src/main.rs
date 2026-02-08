@@ -1,6 +1,8 @@
 use clap::{Parser, Subcommand};
 use tracing::info;
-use tracker_lib::commands::TrackerCommands;
+
+mod tracker;
+use tracker::TrackerCommands;
 
 #[derive(Parser)]
 #[command(name = "you")]
