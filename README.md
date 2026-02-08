@@ -1,30 +1,128 @@
 # You
 
-Rust workspace project with CLI application and libraries.
+CLI утилита для управления рабочими задачами с поддержкой AI ассистента.
 
+## Возможности
 
-## Getting Started
+- 🎯 Работа с трекером задач (Яндекс.Трекер)
+- 🤖 AI ассистент через OpenRouter (GPT, Claude, и другие модели)
+- 📋 Генерация планов работы на основе задач
+- 🔧 Модульная архитектура с отдельными библиотеками
+
+## Структура проекта
+
+- `cli/` - CLI приложение
+- `tracker_lib/` - Библиотека для работы с Яндекс.Трекер API
+- `llm_lib/` - Библиотека для работы с LLM через OpenRouter
+
+## Быстрый старт
 
 ```bash
-# Build the entire workspace
-cargo build
+# Сборка проекта
+cargo build --release
 
-# Run the CLI application
-cargo run -p cli
+# Запуск CLI
+cargo run -- --help
 
-# Run tests
-cargo test
-
-cargo new --lib your-lib-name
+# Установка переменных окружения
+export TRACKER_TOKEN="your-yandex-tracker-token"
+export TRACKER_ORG_ID="your-org-id"
+export OPEN_ROUTER_TOKEN="your-openrouter-api-key"
 ```
 
-## Adding Libraries
+## Использование
 
-When you add a new library , it will automatically be included in the workspace thanks to the wildcard pattern in the root `Cargo.toml`.
+### Работа с трекером задач
 
-To use a library in the CLI or another library, add it to the dependencies:
+```bash
+# Получить информацию о задаче
+cargo run -- tracker get TASK-123
 
+# Поиск задач
+cargo run -- tracker search
+```
+
+### AI ассистент
+
+```bash
+# Задать вопрос LLM
+cargo run -- llm ask "Что такое Rust?"
+
+# Сгенерировать план работы на основе задач из трекера
+cargo run -- llm plan-day
+
+# С указанием конкретной модели
+cargo run -- llm ask "Explain async/await" --model "openai/gpt-4-turbo"
+```
+
+### Доступные модели
+
+- `anthropic/claude-3.5-sonnet` (по умолчанию)
+- `anthropic/claude-3-opus`
+- `openai/gpt-4-turbo`
+- `openai/gpt-3.5-turbo`
+- И многие другие на [OpenRouter](https://openrouter.ai/models)
+
+## Разработка
+
+### Тестирование
+
+```bash
+# Запуск всех тестов
+cargo test --workspace
+
+# Тесты конкретной библиотеки
+cargo test -p llm_lib
+cargo test -p tracker_lib
+
+# Интеграционные тесты (требуется API ключ)
+OPEN_ROUTER_TOKEN=sk-... cargo test -p llm_lib -- --ignored
+```
+
+### Качество кода
+
+```bash
+# Проверка линтером
+cargo clippy --workspace -- -D warnings
+
+# Форматирование кода
+cargo fmt --all
+
+# Проверка форматирования
+cargo fmt --all -- --check
+```
+
+## Добавление новых библиотек
+
+Для добавления новой библиотеки в workspace:
+
+1. Создайте библиотеку:
+```bash
+cargo new --lib your_lib_name
+```
+
+2. Добавьте её в `Cargo.toml`:
+```toml
+[workspace]
+members = [
+    "cli",
+    "tracker_lib",
+    "llm_lib",
+    "your_lib_name",  # новая библиотека
+]
+```
+
+3. Используйте в других модулях:
 ```toml
 [dependencies]
-your-service = { path = "../your-lib-name" }
+your_lib_name = { path = "../your_lib_name" }
 ```
+
+## Документация
+
+- [LLM Library README](llm_lib/README.md) - подробная документация по работе с LLM
+- [Tracker Library](tracker_lib/) - документация по работе с трекером задач
+
+## Лицензия
+
+MIT OR Apache-2.0

@@ -12,3 +12,4 @@ tracing.workspace = true
 tracing-subscriber.workspace = true
 clap.workspace = true
 tracker_lib = { path = "../tracker_lib" }
+llm_lib = { path = "../llm_lib" }

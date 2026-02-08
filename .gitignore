@@ -4,6 +4,9 @@ Cargo.lock
 **/*.rs.bk
 *.pdb
 
+# Environment variables
+.env
+
 # IDE
 .vscode/
 .idea/

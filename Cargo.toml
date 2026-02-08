@@ -2,7 +2,7 @@
 resolver = "2"
 
 members = [
-    "cli", "tracker_lib",
+    "cli", "tracker_lib", "llm_lib",
 ]
 
 [workspace.package]

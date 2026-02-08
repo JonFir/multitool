@@ -4,6 +4,9 @@ use tracing::info;
 mod tracker;
 use tracker::TrackerCommands;
 
+mod llm;
+use llm::LlmCommands;
+
 #[derive(Parser)]
 #[command(name = "you")]
 #[command(about = "CLI утилита для управления рабочими задачами", long_about = None)]
@@ -18,6 +21,11 @@ enum Commands {
     Tracker {
         #[command(subcommand)]
         command: TrackerCommands,
+    },
+    /// Работа с LLM (AI ассистент)
+    Llm {
+        #[command(subcommand)]
+        command: LlmCommands,
     },
 }
 
@@ -38,6 +46,7 @@ async fn main() -> anyhow::Result<()> {
 
     match cli.command {
         Commands::Tracker { command } => command.execute().await?,
+        Commands::Llm { command } => command.execute().await?,
     }
 
     Ok(())

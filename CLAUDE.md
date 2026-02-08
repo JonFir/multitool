@@ -148,6 +148,11 @@ async fn fetch_tasks(client: &TaskClient, filter: &TaskFilter) -> Result<Vec<Tas
 
 **Key principle**: The goal is code that is easy to understand, maintain, and debug. Don't sacrifice clarity for the sake of being "more functional."
 
+#### Comments
+**Guideline**: Avoid obvious comments that merely restate what the code does.
+
+**Key principle**: Write self-documenting code with clear variable and function names. Only add comments when the **intent** or **rationale** isn't obvious from the code itself.
+
 ### Error Handling
 - Use `anyhow` for error handling
 - Provide context with errors using `.context()` or `.with_context()`
