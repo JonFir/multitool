@@ -2,6 +2,8 @@
 //!
 //! Содержит методы для получения информации о конкретных задачах.
 
+use std::collections::HashMap;
+
 use crate::models::{ExpandField, Issue};
 use crate::{Result, TrackerClient};
 
@@ -38,15 +40,8 @@ impl TrackerClient {
 
         let resource_path = format!("issues/{}", issue_id);
 
-        // Формируем query параметры
-        let mut query_params = std::collections::HashMap::new();
-        if let Some(params) = params {
-            if !params.expand.is_empty() {
-                let expand_values: Vec<&str> =
-                    params.expand.iter().map(|field| field.as_str()).collect();
-                query_params.insert("expand".to_string(), expand_values.join(","));
-            }
-        }
+        let expand = params.unwrap_or_default().expand.iter().map(|f| f.as_str()).collect::<Vec<_>>().join(",");
+        let query_params = HashMap::from([("expand".to_string(), expand)]);
 
         let query = if query_params.is_empty() {
             None
