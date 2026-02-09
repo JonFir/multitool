@@ -1,0 +1,19 @@
+[package]
+name = "workflows_lib"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+# Internal dependencies
+tracker_lib = { path = "../tracker_lib" }
+llm_lib = { path = "../llm_lib" }
+
+[dev-dependencies]
+mockall.workspace = true
+wiremock.workspace = true
