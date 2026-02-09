@@ -13,19 +13,20 @@
 //! ## Example Usage
 //!
 //! ```no_run
-//! use llm_lib::{LlmClient, LlmConfig, Message, CompletionOptions};
+//! use llm_lib::{LlmClient, LlmClientTrait, LlmConfig, Message, CompletionOptions};
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let config = LlmConfig::new("your-api-key", "anthropic/claude-3.5-sonnet");
+//!     // Create config from OPEN_ROUTER_TOKEN environment variable
+//!     let config = LlmConfig::new("anthropic/claude-3.5-sonnet")?;
 //!     let client = LlmClient::new(config)?;
 //!
-//!     let response = client.complete("What is Rust?").await?;
+//!     let response = client.complete("What is Rust?".to_string()).await?;
 //!     println!("Response: {}", response);
 //!
 //!     let response = client.complete_with_system(
-//!         "You are a helpful coding assistant",
-//!         "Explain async/await in Rust"
+//!         "You are a helpful coding assistant".to_string(),
+//!         "Explain async/await in Rust".to_string()
 //!     ).await?;
 //!     println!("Response: {}", response);
 //!
@@ -55,14 +56,10 @@
 //! use llm_lib::{LlmClient, LlmConfig};
 //!
 //! # fn main() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = LlmConfig {
-//!     api_key: "your-api-key".to_string(),
-//!     model: "anthropic/claude-3.5-sonnet".to_string(),
-//!     base_url: "https://openrouter.ai/api/v1".to_string(),
-//!     timeout_secs: 60,
-//!     site_url: Some("https://yourapp.com".to_string()),
-//!     app_name: Some("Your App Name".to_string()),
-//! };
+//! let mut config = LlmConfig::new("anthropic/claude-3.5-sonnet")?;
+//! config.timeout_secs = 60;
+//! config.site_url = Some("https://yourapp.com".to_string());
+//! config.app_name = Some("Your App Name".to_string());
 //!
 //! let client = LlmClient::new(config)?;
 //! # Ok(())
@@ -73,6 +70,9 @@ mod client;
 mod error;
 pub mod models;
 
-pub use client::{LlmClient, LlmConfig};
+pub use client::{LlmClient, LlmClientTrait, LlmConfig};
 pub use error::{LlmError, Result};
 pub use models::{ChatCompletionResponse, Choice, CompletionOptions, Message, Role, Usage};
+
+#[cfg(test)]
+pub use client::MockLlmClientTrait;

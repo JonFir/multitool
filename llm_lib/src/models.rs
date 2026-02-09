@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-/// Role of the message sender
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum Role {
@@ -9,7 +8,6 @@ pub enum Role {
     Assistant,
 }
 
-/// A single message in the conversation
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
     pub role: Role,
@@ -17,7 +15,6 @@ pub struct Message {
 }
 
 impl Message {
-    /// Create a system message
     pub fn system(content: impl Into<String>) -> Self {
         Self {
             role: Role::System,
@@ -25,7 +22,6 @@ impl Message {
         }
     }
 
-    /// Create a user message
     pub fn user(content: impl Into<String>) -> Self {
         Self {
             role: Role::User,
@@ -33,7 +29,6 @@ impl Message {
         }
     }
 
-    /// Create an assistant message
     pub fn assistant(content: impl Into<String>) -> Self {
         Self {
             role: Role::Assistant,
@@ -42,30 +37,23 @@ impl Message {
     }
 }
 
-/// Options for chat completion request
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct CompletionOptions {
-    /// Temperature for sampling (0.0 - 2.0)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub temperature: Option<f32>,
 
-    /// Maximum tokens to generate
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_tokens: Option<u32>,
 
-    /// Top-p sampling parameter
     #[serde(skip_serializing_if = "Option::is_none")]
     pub top_p: Option<f32>,
 
-    /// Frequency penalty
     #[serde(skip_serializing_if = "Option::is_none")]
     pub frequency_penalty: Option<f32>,
 
-    /// Presence penalty
     #[serde(skip_serializing_if = "Option::is_none")]
     pub presence_penalty: Option<f32>,
 
-    /// Stop sequences
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stop: Option<Vec<String>>,
 }
@@ -91,7 +79,6 @@ impl CompletionOptions {
     }
 }
 
-/// Chat completion request
 #[derive(Debug, Serialize)]
 pub struct ChatCompletionRequest {
     pub model: String,
@@ -100,7 +87,6 @@ pub struct ChatCompletionRequest {
     pub options: CompletionOptions,
 }
 
-/// Choice in the completion response
 #[derive(Debug, Deserialize)]
 pub struct Choice {
     pub index: u32,
@@ -108,7 +94,6 @@ pub struct Choice {
     pub finish_reason: Option<String>,
 }
 
-/// Token usage information
 #[derive(Debug, Deserialize)]
 pub struct Usage {
     pub prompt_tokens: u32,
@@ -116,7 +101,6 @@ pub struct Usage {
     pub total_tokens: u32,
 }
 
-/// Chat completion response
 #[derive(Debug, Deserialize)]
 pub struct ChatCompletionResponse {
     pub id: String,
@@ -127,13 +111,11 @@ pub struct ChatCompletionResponse {
 }
 
 impl ChatCompletionResponse {
-    /// Get the content of the first choice
     pub fn content(&self) -> Option<&str> {
         self.choices.first().map(|c| c.message.content.as_str())
     }
 }
 
-/// Error response from the API
 #[derive(Debug, Deserialize)]
 pub struct ErrorResponse {
     pub error: ErrorDetail,
