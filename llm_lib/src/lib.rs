@@ -74,5 +74,5 @@ pub use client::{LlmClient, LlmClientTrait, LlmConfig};
 pub use error::{LlmError, Result};
 pub use models::{ChatCompletionResponse, Choice, CompletionOptions, Message, Role, Usage};
 
-#[cfg(test)]
+#[cfg(any(test, feature = "testing"))]
 pub use client::MockLlmClientTrait;

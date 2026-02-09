@@ -7,7 +7,7 @@ use std::future::Future;
 use std::time::Duration;
 use tracing::{debug, info, instrument, warn};
 
-#[cfg_attr(test, mockall::automock)]
+#[cfg_attr(any(test, feature = "testing"), mockall::automock)]
 pub trait LlmClientTrait {
     fn chat_completion(
         &self,
