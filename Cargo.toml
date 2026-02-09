@@ -11,6 +11,9 @@ edition = "2021"
 authors = []
 license = "MIT OR Apache-2.0"
 
+[workspace.lints.clippy]
+field_reassign_with_default = "allow"
+
 [workspace.dependencies]
 # Common dependencies can be defined here
 tokio = { version = "1.49.0", features = ["full"] }
