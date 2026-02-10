@@ -14,6 +14,7 @@ CLI утилита для управления рабочими задачами
 - `cli/` - CLI приложение
 - `tracker_lib/` - Библиотека для работы с Яндекс.Трекер API
 - `llm_lib/` - Библиотека для работы с LLM через OpenRouter
+- `calendar_lib/` - Библиотека для работы с календарем и расписанием
 
 ## Быстрый старт
 
@@ -74,6 +75,7 @@ cargo test --workspace
 # Тесты конкретной библиотеки
 cargo test -p llm_lib
 cargo test -p tracker_lib
+cargo test -p calendar_lib
 
 # Интеграционные тесты (требуется API ключ)
 OPEN_ROUTER_TOKEN=sk-... cargo test -p llm_lib -- --ignored
@@ -122,6 +124,7 @@ your_lib_name = { path = "../your_lib_name" }
 
 - [LLM Library README](llm_lib/README.md) - подробная документация по работе с LLM
 - [Tracker Library](tracker_lib/) - документация по работе с трекером задач
+- [Calendar Library](calendar_lib/) - документация по работе с календарем
 
 ## Лицензия
 
