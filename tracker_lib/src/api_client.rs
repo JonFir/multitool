@@ -2,6 +2,7 @@ use reqwest::{Client, Method, RequestBuilder, Response, StatusCode};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use std::env::VarError;
 
 /// Ошибки при работе с API Трекера
 #[derive(Debug, thiserror::Error)]
@@ -143,10 +144,43 @@ pub struct TrackerClient {
     client: Client,
 }
 
+fn parse_work_proxy_url(work_proxy_value: &str) -> Result<String> {
+    let trimmed_value = work_proxy_value.trim();
+    if trimmed_value.is_empty() {
+        return Err(TrackerError::ConfigError(
+            "Переменная окружения WORK_PROXY установлена, но пуста. Ожидается формат host:port"
+                .to_string(),
+        ));
+    }
+
+    Ok(format!("socks5://{}", trimmed_value))
+}
+
 impl TrackerClient {
     /// Создать новый клиент с заданной конфигурацией
     pub fn new(config: TrackerConfig) -> Result<Self> {
-        let client = Client::builder()
+        let mut client_builder = Client::builder();
+
+        match std::env::var("WORK_PROXY") {
+            Ok(work_proxy_value) => {
+                let proxy_url = parse_work_proxy_url(&work_proxy_value)?;
+                let proxy = reqwest::Proxy::all(&proxy_url).map_err(|e| {
+                    TrackerError::ConfigError(format!(
+                        "Некорректная конфигурация WORK_PROXY '{}': {}",
+                        work_proxy_value, e
+                    ))
+                })?;
+                client_builder = client_builder.proxy(proxy);
+            }
+            Err(VarError::NotPresent) => {}
+            Err(VarError::NotUnicode(_)) => {
+                return Err(TrackerError::ConfigError(
+                    "Переменная окружения WORK_PROXY содержит не-UTF-8 значение".to_string(),
+                ));
+            }
+        }
+
+        let client = client_builder
             .build()
             .map_err(|e| TrackerError::ConfigError(e.to_string()))?;
 
