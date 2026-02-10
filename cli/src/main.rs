@@ -7,6 +7,8 @@ use tracker::TrackerCommands;
 mod llm;
 use llm::LlmCommands;
 
+mod tui;
+
 #[derive(Parser)]
 #[command(name = "you")]
 #[command(about = "CLI утилита для управления рабочими задачами", long_about = None)]
@@ -27,6 +29,8 @@ enum Commands {
         #[command(subcommand)]
         command: LlmCommands,
     },
+    /// Интерактивный TUI режим
+    Tui,
 }
 
 #[tokio::main]
@@ -47,6 +51,7 @@ async fn main() -> anyhow::Result<()> {
     match cli.command {
         Commands::Tracker { command } => command.execute().await?,
         Commands::Llm { command } => command.execute().await?,
+        Commands::Tui => tui::run_tui().await?,
     }
 
     Ok(())
