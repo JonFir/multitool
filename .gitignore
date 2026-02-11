@@ -17,3 +17,9 @@ Cargo.lock
 # OS
 .DS_Store
 Thumbs.db
+
+# Xcode / macOS development
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcuserstate
